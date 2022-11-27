@@ -1,0 +1,14 @@
+{
+    "version": "2.0.0",
+    "tasks": [{
+        "label": "init",
+        "command": "conda",
+        "args": ["init","bash"],
+        "type": "shell"
+    },{
+        "label": "activate",
+        "command": "conda",
+        "args": ["activate","machine_learning"],
+        "type": "shell"
+    }]
+}

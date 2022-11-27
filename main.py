@@ -28,11 +28,33 @@ import utils
 # 3 labels (Galaxy, Star or Quasar)
 num_labels = 3
 
-#  training data stored in arrays X, y
-data = np.genfromtxt("star_classification.csv", delimiter=",", dtype=str)
-#loadmat(os.path.join('Data', 'ex3data1.mat'))
-X, y = data[:,:17], data[:,17]
-#X, y = data['X'], data['y'].ravel()
+labels = np.genfromtxt("star_classification.csv", delimiter=",", skip_header=1, usecols=17, dtype=str) # use arg names=True for headers
+data = np.genfromtxt('star_classification.csv', delimiter=',', skip_header=1)[:,:17]
+'''
+[:,:17] to stop before the string labels
+[1:,..] to remove the header column 
+'''
+
+### Preprocess dataset ###
+# Ignore useless columns/features
+'''
+Ik raad aan om de volgende kolommen te negeren (en dus verwijderen) aangezien ze geen nuttige data zijn:
+- obj_ID
+- Alpha
+- Delta
+- run_ID
+- rereun_ID
+- cam_col
+- field_ID
+- spec_obj_ID ?
+- plate ?
+- MJD
+'''
+
+X = data 
+
+# Convert string labels to classification values
+y = labels
 
 m = y.size
 
@@ -40,3 +62,6 @@ print("Dataset size: ", m)
 print("Dataset shape: ", data.shape)
 print("input shape: ", X.shape)
 print("Labels: ", y)
+print(X[1])
+
+
