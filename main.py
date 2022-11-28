@@ -78,6 +78,6 @@ print(y.shape)
 all_theta = utils.oneVsAll(X, y, num_labels, lambda_)
 
 # Predict dataset
-#pred = utils.predictOneVsAll(all_theta, X)
-#print('Training Set Accuracy: {:.2f}%'.format(np.mean(pred == y) * 100))
+pred = utils.predictOneVsAll(all_theta, X)
+print('Training Set Accuracy: {:.2f}%'.format(np.mean(pred == y) * 100))
 
