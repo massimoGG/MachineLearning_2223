@@ -51,7 +51,7 @@ def lrCostFunction(theta, X, y, lambda_):
     temp = theta 
     temp[0] = 0   # because we don't add anything for j = 0
     
-    J=(1/m) * ((-y.dot(np.log(h)))-(1-y).dot(np.log(1-h)))+ ((lambda_/(2*m))* np.sum(np.square(temp)))
+    J= ((-y.dot(np.log(h)))-(1-y).dot(np.log(1-h)))/m+ ((lambda_/(2*m))* np.sum(np.square(temp)))
     grad = (1 / m) * (h - y).dot(X) 
     grad = grad + (lambda_ / m) * temp
 
@@ -121,6 +121,7 @@ def oneVsAll(X, y, num_labels, lambda_):
             method='CG',
             options=options
         )
+
         # Append obtained minized theta to array 
         all_theta[i] = res.x
 

@@ -23,7 +23,7 @@ import utils
 
 # Dataset 
 labels = np.genfromtxt("star_classification.csv", delimiter=",", skip_header=1, usecols=17, dtype=str) # use arg names=True for headers
-data = np.genfromtxt('star_classification.csv', delimiter=',', skip_header=1)[:,:17]
+data = np.genfromtxt('star_classification.csv', delimiter=',', skip_header=1)[:,[3,4,5,6,7,13]]
 '''
 [:,:17] to stop before the string labels
 [1:,..] to remove the header column 
@@ -33,18 +33,19 @@ data = np.genfromtxt('star_classification.csv', delimiter=',', skip_header=1)[:,
 # Ignore useless columns/features
 '''
 Ik raad aan om de volgende kolommen te negeren (en dus verwijderen) aangezien ze geen nuttige data zijn:
-- obj_ID
-- Alpha
-- Delta
-- run_ID
-- rereun_ID
-- cam_col
-- field_ID
-- spec_obj_ID ?
-- plate ?
-- MJD
+- obj_ID            = A0
+- Alpha             = B1
+- Delta             = C2
+- run_ID            = I8
+- rereun_ID         = J9
+- cam_col           = K10
+- field_ID          = L11
+- spec_obj_ID ?     = M12
+- plate ?           = O14
+- MJD               = P15
+- FIBERID           = Q16
 '''
-X = data 
+X = data
 
 print("The input data shape is ", X.shape, "; there are ", X[:,1].size, " training examples and ", X[1,:].size, " features.")
 
@@ -76,6 +77,8 @@ print(X.shape)
 print(y)
 print(y.shape)
 all_theta = utils.oneVsAll(X, y, num_labels, lambda_)
+
+print(all_theta)
 
 # Predict dataset
 pred = utils.predictOneVsAll(all_theta, X)
