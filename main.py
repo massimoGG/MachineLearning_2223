@@ -54,14 +54,30 @@ print("The input data shape is ", X.shape, "; there are ", X[:,1].size, " traini
 
 # TODO VANAF HIER MOET ALLES NOG AANGEPAST WORDEN OP ONZE DATASET
 
-# Convert string labels to classification values
-y = labels
+'''
+    Convert string labels to classification values
+    GALAXY = 0
+    STAR = 1
+    QUASAR = 2
+'''
+y = np.ones(labels.size)
+for i in range(y.size):
+    if (labels[i] == "GALAXY"):
+        y[i] = 0
+    elif (labels[i] == "STAR"):
+        y[i] = 1
+    elif (labels[i] == "QSO"):
+        y[i] = 2
+    else:
+        print("ERROR: ",i,labels[i],"Unknown classifier in dataset!")
 
 m = y.size
+print("y has size of ",m)
 
 # Apply one-vs-all multi-classification
+# y = vector of labels from 0 to 2. Classifier for 100000 classes
 lambda_ = 0.1
-#all_theta = utils.oneVsAll(X, y, num_labels, lambda_)
+all_theta = utils.oneVsAll(X, y, num_labels, lambda_)
 
 # Predict dataset
 #pred = utils.predictOneVsAll(all_theta, X)
