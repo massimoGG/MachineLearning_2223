@@ -22,10 +22,6 @@ from scipy import optimize
 import utils
 
 # Dataset 
-# 3 labels (Galaxy, Star or Quasar)
-num_labels = 3
-# -> y = [100000; 1] vector that contain labels for training set.
-
 labels = np.genfromtxt("star_classification.csv", delimiter=",", skip_header=1, usecols=17, dtype=str) # use arg names=True for headers
 data = np.genfromtxt('star_classification.csv', delimiter=',', skip_header=1)[:,:17]
 '''
@@ -52,7 +48,9 @@ X = data
 
 print("The input data shape is ", X.shape, "; there are ", X[:,1].size, " training examples and ", X[1,:].size, " features.")
 
-# TODO VANAF HIER MOET ALLES NOG AANGEPAST WORDEN OP ONZE DATASET
+# 3 labels (Galaxy/GALAXY, Star/STAR or Quasar/QSO)
+num_labels = 3
+# -> y = [100000; 1] vector that contain labels for training set.
 
 '''
     Convert string labels to classification values
@@ -71,12 +69,12 @@ for i in range(y.size):
     else:
         print("ERROR: ",i,labels[i],"Unknown classifier in dataset!")
 
-m = y.size
-print("y has size of ",m)
-
 # Apply one-vs-all multi-classification
-# y = vector of labels from 0 to 2. Classifier for 100000 classes
 lambda_ = 0.1
+print(X)
+print(X.shape)
+print(y)
+print(y.shape)
 all_theta = utils.oneVsAll(X, y, num_labels, lambda_)
 
 # Predict dataset

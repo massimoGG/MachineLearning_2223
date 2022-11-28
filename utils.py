@@ -34,7 +34,7 @@ def lrCostFunction(theta, X, y, lambda_):
         A vector of shape (n, ) which is the gradient of the cost
         function with respect to theta, at the current values of theta.
     """
-
+    
     #Initialize some useful values
     m = y.size
     
@@ -56,7 +56,6 @@ def lrCostFunction(theta, X, y, lambda_):
     # Grad to the partial derivative of the cost 
     grad = np.dot(h-y, X) / m + (lambda_ * temp / m)
 
-        
     # =============================================================
     return J, grad
 
