@@ -44,17 +44,24 @@ def lrCostFunction(theta, X, y, lambda_):
     
     # ====================== YOUR CODE HERE ======================
     # Hypothesis
-    h = sigmoid(np.dot(X, theta.T))
 
-    # Because of Hint 2
+    h = sigmoid(np.dot(X, theta.T))
+    
+    # Hint 2
     temp = theta 
     temp[0] = 0   # because we don't add anything for j = 0
+    
+    J=(1/m) * ((-y.dot(np.log(h)))-(1-y).dot(np.log(1-h)))+ ((lambda_/(2*m))* np.sum(np.square(temp)))
+    grad = (1 / m) * (h - y).dot(X) 
+    grad = grad + (lambda_ / m) * temp
 
+    '''
     # Cost
     J = (np.sum((-y*np.log(h) - (1-y)*np.log(1-h)))/ m) + (lambda_*np.sum(np.power(temp,2))/(2*m))
 
     # Grad to the partial derivative of the cost 
     grad = np.dot(h-y, X) / m + (lambda_ * temp / m)
+    '''
 
     # =============================================================
     return J, grad
@@ -91,7 +98,7 @@ def oneVsAll(X, y, num_labels, lambda_):
     """
     # Some useful variables
     m, n = X.shape
-    
+
     # You need to return the following variables correctly 
     all_theta = np.zeros((num_labels, n + 1))
 
