@@ -3,6 +3,7 @@
 Project for the course Machine Learning 2223 @ University of Leuven.
 Made by Massimo Giardina and Ismael Warnants
 
+
 ## Dataset in use
 `Kaggle Dataset - Stellar Classification Dataset - SDSS17`
 
