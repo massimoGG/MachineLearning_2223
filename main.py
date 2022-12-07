@@ -29,6 +29,26 @@ data = np.genfromtxt('star_classification.csv', delimiter=',', skip_header=1)[:,
 [1:,..] to remove the header column 
 '''
 
+# 3 labels (Galaxy/GALAXY, Star/STAR or Quasar/QSO)
+num_labels = 3
+
+'''
+    Convert string labels to classification values
+    GALAXY = 0
+    STAR = 1
+    QUASAR = 2
+'''
+y = np.ones(labels.size)
+for i in range(y.size):
+    if (labels[i] == "GALAXY"):
+        y[i] = 0
+    elif (labels[i] == "STAR"):
+        y[i] = 1
+    elif (labels[i] == "QSO"):
+        y[i] = 2
+    else:
+        print("ERROR: ",i,labels[i],"Unknown classifier in dataset!")
+
 ### Preprocess dataset ###
 # Ignore useless columns/features
 '''
@@ -46,7 +66,6 @@ Ik raad aan om de volgende kolommen te negeren (en dus verwijderen) aangezien ze
 - FIBERID           = Q16
 '''
 X = data
-print(X.shape)
 
 fig, ax = pyplot.subplots(3)
 
@@ -66,6 +85,7 @@ for i in range(0, X.shape[0]):
         if (j < -1):
             # Corrupted datapoint, remove
             newX = np.delete(X, i,0)
+            y = np.delete(y,i,0)
             print("DELETED", i)
             break
     i += 1
@@ -100,35 +120,9 @@ for i in range(0, X.shape[1]):
 
 pyplot.show()
 
-print("The input data shape is ", X.shape, "; there are ", X[:,1].size, " training examples and ", X[1,:].size, " features.")
-# 3 labels (Galaxy/GALAXY, Star/STAR or Quasar/QSO)
-num_labels = 3
-# -> y = [100000; 1] vector that contain labels for training set.
-
-'''
-    Convert string labels to classification values
-    GALAXY = 0
-    STAR = 1
-    QUASAR = 2
-'''
-y = np.ones(labels.size)
-for i in range(y.size):
-    if (labels[i] == "GALAXY"):
-        y[i] = 0
-    elif (labels[i] == "STAR"):
-        y[i] = 1
-    elif (labels[i] == "QSO"):
-        y[i] = 2
-    else:
-        print("ERROR: ",i,labels[i],"Unknown classifier in dataset!")
-
-'''
 # Apply one-vs-all multi-classification
 lambda_ = 0.1
-print(X)
-print(X.shape)
-print(y)
-print(y.shape)
+print("X Shape:", X.shape, "Y Shape:", y.shape)
 all_theta = utils.oneVsAll(X, y, num_labels, lambda_)
 
 print(all_theta)
@@ -137,4 +131,3 @@ print(all_theta)
 pred = utils.predictOneVsAll(all_theta, X)
 print('Training Set Accuracy: {:.2f}%'.format(np.mean(pred == y) * 100))
 
-'''
