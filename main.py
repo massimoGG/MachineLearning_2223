@@ -46,9 +46,59 @@ Ik raad aan om de volgende kolommen te negeren (en dus verwijderen) aangezien ze
 - FIBERID           = Q16
 '''
 X = data
+print(X.shape)
+
+fig, ax = pyplot.subplots(3)
+
+# Show data [column based]
+for i in range(0, X.shape[1]):
+    col = X[:,i]
+    Y_ = np.ones(col.size)*i
+    ax[0].plot(Y_, col, 'ro', ms=2, mec='k')
+    ax[0].set_title("RAW dataset")
+
+# Filter data [row based]
+i = 0
+newX = np.ones(1)
+for i in range(0, X.shape[0]):
+    row = X[i,:]
+    for j in row:
+        if (j < -1):
+            # Corrupted datapoint, remove
+            newX = np.delete(X, i,0)
+            print("DELETED", i)
+            break
+    i += 1
+X = newX
+print("New dataset: ", X.shape)
+
+# Normalize dataset
+for i in range(0, X.shape[1]):
+    col = X[:,i]
+    Y_ = np.ones(col.size)*i
+    # Filter out the -9999 points
+    ax[1].plot(Y_, col, 'bo', ms=2, mec='k')
+    ax[1].set_title("Filtered dataset")
+
+"""
+# Normalize data
+for i in range(0, X.shape[1]):
+    # Scale between 0 and 1
+    # Figure out min and max
+
+    minValue = np.min(X[:,i])
+    if (minValue == -9999):
+        # Corrupted datapoint -> Drop  
+        np.delete(X, i)
+        continue
+        #minValue = 0
+
+    maxValue = np.max(X[:,i])
+    print(i,"minValue",minValue,"maxValue",maxValue)
+"""
+pyplot.show()
 
 print("The input data shape is ", X.shape, "; there are ", X[:,1].size, " training examples and ", X[1,:].size, " features.")
-
 # 3 labels (Galaxy/GALAXY, Star/STAR or Quasar/QSO)
 num_labels = 3
 # -> y = [100000; 1] vector that contain labels for training set.
@@ -70,6 +120,7 @@ for i in range(y.size):
     else:
         print("ERROR: ",i,labels[i],"Unknown classifier in dataset!")
 
+'''
 # Apply one-vs-all multi-classification
 lambda_ = 0.1
 print(X)
@@ -84,3 +135,4 @@ print(all_theta)
 pred = utils.predictOneVsAll(all_theta, X)
 print('Training Set Accuracy: {:.2f}%'.format(np.mean(pred == y) * 100))
 
+'''
