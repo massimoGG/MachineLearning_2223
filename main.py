@@ -72,7 +72,7 @@ for i in range(0, X.shape[0]):
 X = newX
 print("New dataset: ", X.shape)
 
-# Normalize dataset
+# Show dataset
 for i in range(0, X.shape[1]):
     col = X[:,i]
     Y_ = np.ones(col.size)*i
@@ -80,22 +80,24 @@ for i in range(0, X.shape[1]):
     ax[1].plot(Y_, col, 'bo', ms=2, mec='k')
     ax[1].set_title("Filtered dataset")
 
-"""
-# Normalize data
+# Normalize data per column
 for i in range(0, X.shape[1]):
     # Scale between 0 and 1
     # Figure out min and max
 
     minValue = np.min(X[:,i])
-    if (minValue == -9999):
-        # Corrupted datapoint -> Drop  
-        np.delete(X, i)
-        continue
-        #minValue = 0
-
     maxValue = np.max(X[:,i])
     print(i,"minValue",minValue,"maxValue",maxValue)
-"""
+    X[:,i] = (X[:,i] - minValue) / (maxValue - minValue)
+
+# Show mapped dataset
+for i in range(0, X.shape[1]):
+    col = X[:,i]
+    Y_ = np.ones(col.size)*i
+    # Filter out the -9999 points
+    ax[2].plot(Y_, col, 'go', ms=2, mec='k')
+    ax[2].set_title("Mapped dataset")
+
 pyplot.show()
 
 print("The input data shape is ", X.shape, "; there are ", X[:,1].size, " training examples and ", X[1,:].size, " features.")
