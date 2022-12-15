@@ -68,8 +68,36 @@ df['class'] = dfclass.copy()
 
 print(df.head())
 
+# Balancing dataset
+twos_subset = df.loc[df["class"] == 2, :] # Lowest present
+number_of_2s = len(twos_subset)
+
+print(number_of_2s)
+
+zeros_subset = df.loc[df["class"] == 0, :]
+sampled_zeros = zeros_subset.sample(number_of_2s) # Sampling the same amount as the lowest present
+
+print(sampled_zeros)
+
+
+ones_subset = df.loc[df["class"] == 1, :]
+sampled_ones = ones_subset.sample(number_of_2s) # Sampling the same amount as the lowest present
+
+print(sampled_ones)
+
+clean_df = pd.concat([sampled_ones, sampled_zeros, twos_subset], ignore_index=True)
+
+print(clean_df)
+
+print(clean_df['class'].value_counts())
+
+
 # Split dataset 
-train, validate, test = np.split(df.sample(frac=1, random_state=42),[int(.7*len(df)), int(.85*len(df))])
+train, validate, test = np.split(clean_df.sample(frac=1, random_state=42),[int(.7*len(clean_df)), int(.85*len(clean_df))])
+
+print(train['class'].value_counts())
+print(validate['class'].value_counts())
+print(test['class'].value_counts())
 
 X = train.iloc[:,0:4]
 ones = np.ones([X.shape[0],1])
