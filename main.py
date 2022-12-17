@@ -157,4 +157,4 @@ y_t = test['class'].to_numpy()
 pred = utils.predictOneVsAll(all_theta, X_t)
 accuracy = np.mean(pred == y_t) * 100
 
-print("--------------------\Training Set Accuracy\n--------------------\n",accuracy)
+print("--------------------\nTraining Set Accuracy\n--------------------\n",accuracy,"%")
