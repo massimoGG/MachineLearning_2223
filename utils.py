@@ -73,7 +73,8 @@ def lrCostFunction(theta, X, y, lambda_):
     temp = theta 
     temp[0] = 0   # because we don't add anything for j = 0
     
-    J= ((-y.dot(np.log(h)))-(1-y).dot(np.log(1-h)))/m+ ((lambda_/(2*m))* np.sum(np.square(temp)))
+    J= (1/m)*((-y.dot(np.log(h)))-(1-y).dot(np.log(1-h)))+ ((lambda_/(2*m))* np.sum(np.square(temp)))
+    
     grad = (1 / m) * (h - y).dot(X) 
     grad = grad + (lambda_ / m) * temp
 
@@ -177,7 +178,7 @@ def predictOneVsAll(all_theta, X):
     p : array_like
         The predictions for each data point in X. This is a vector of shape (m, ).
     """
-    m = X.shape[0];
+    m = X.shape[0]
     num_labels = all_theta.shape[0]
 
     # You need to return the following variables correctly 
