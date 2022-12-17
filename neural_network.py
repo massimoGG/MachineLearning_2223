@@ -111,19 +111,6 @@ y = train.iloc[:,5].values #.values converts it from pandas.core.frame.DataFrame
 theta = np.zeros([1,5])
 print(theta.shape)
 
-# Apply one-vs-all multi-classification
-lambda_ = 0.1
-print("X Shape:", X.shape, "Y Shape:", y.shape)
-all_theta = utils.oneVsAll(X, y, 3, lambda_)
-
-print(all_theta)
-
-# Predict dataset
-print(test.head())
-X_test = validate.iloc[:,0:5]
-y_test = validate.iloc[:,5:10].values
-print(X_test.shape)
-print(y_test.shape)
-pred = utils.predictOneVsAll(all_theta, X_test)
-print('Training Set Accuracy: {:.2f}%'.format(np.mean(pred == y_test) * 100))
-
+# Apply first layer
+# Train hidden layer
+# Test model
