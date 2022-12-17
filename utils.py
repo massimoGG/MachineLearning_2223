@@ -1,9 +1,30 @@
 import sys
 import numpy as np
-from matplotlib import pyplot
+from matplotlib import pyplot as plt
 # Optimization module in scipy
 from scipy import optimize
 
+def showCorrelation(df):
+    # Show correlation
+    shape = df.shape[1]
+    corr = df.corr(method="pearson")
+    corr.style.background_gradient(cmap='Greens')
+
+    fig, ax = plt.subplots(figsize=(shape, shape))
+    im = ax.imshow(corr, interpolation="spline36")
+    #fig.colorbar(im, orientation="vertical")
+
+    # Show all ticks and label them with the dataframe column name
+    ax.set_xticklabels(df.columns, rotation=65, fontsize=15)
+    ax.set_yticklabels(df.columns, rotation=0, fontsize=15)
+
+    # Loop over data dimensions and create text annotations
+    for i in range(len(df.columns)-1):
+        for j in range(len(df.columns)-1):
+            text = ax.text(j, i, round(corr.to_numpy()[i, j], 2),
+                           ha="center", va="center", color="black")
+
+    plt.show()
 
 def lrCostFunction(theta, X, y, lambda_):
     """

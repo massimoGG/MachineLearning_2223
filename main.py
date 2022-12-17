@@ -13,7 +13,7 @@ import os
 import numpy as np
 
 # Plotting library
-from matplotlib import pyplot
+from matplotlib import pyplot as plt
 
 # Optimization module in scipy
 from scipy import optimize
@@ -23,32 +23,24 @@ import utils
 
 import pandas as pd
 
-# Dataset 
-#labels = np.genfromtxt("MachineLearning_2223/star_classification.csv", delimiter=",", skip_header=1, usecols=17, dtype=str) # use arg names=True for headers
+# Show Debug info
+DEBUG = True
 
-#loading the data
-df=pd.read_csv('MachineLearning_2223/star_classification.csv')
-print(df['class'].value_counts())
+# Load dataset 
+#labels = np.genfromtxt("MachineLearning_2223/star_classification.csv", delimiter=",", skip_header=1, usecols=17, dtype=str) # use arg names=True for headers
+df=pd.read_csv('star_classification.csv')
 #plt.pie(df['class'].value_counts(),autopct="%1.1f%%",labels=['GALAXY','STAR','QSO'])
 #plt.legend()
 #plt.show()
 
-#   The heatmap on raw data
-#sns.heatmap(df.corr(numeric_only=True))
-#plt.show()
-
 print('Shape before filtering columns :',df.shape)
-
 # Change class to values
 df.loc[df["class"] == "GALAXY", "class"] = 0
 df.loc[df["class"] == "STAR", "class"] = 1
 df.loc[df["class"] == "QSO", "class"] = 2
-print(df['class'].value_counts())
 
-#dfclass['class'] = df['class'].copy()
-
-df.drop(['obj_ID','cam_col', 'run_ID', 'rerun_ID', 'field_ID', 'fiber_ID', 'plate', 'MJD', 'spec_obj_ID', 'alpha', 'delta', 'redshift'] ,axis=1, inplace=True)
-df.shape
+# Drop useless fields
+df.drop(['obj_ID','cam_col', 'run_ID', 'rerun_ID', 'field_ID', 'fiber_ID', 'plate', 'MJD', 'spec_obj_ID','alpha', 'delta'] ,axis=1, inplace=True)
 
 print('Shape before filtering outliers :',df.shape)
 df=df[df.z>-2000]
@@ -56,17 +48,34 @@ df=df[df.u>-2000]
 df=df[df.g>-2000]
 print('Shape after filtering :',df.shape)
 
-#   The heatmap looks way better now
-#sns.heatmap(df.corr(numeric_only=True))
-#plt.show()
+if DEBUG:
+    utils.showCorrelation(df)
 
 dfclass = df['class'].copy()
 df = (df - df.mean())/df.std()
 df['class'] = dfclass.copy()
-#print(df.head())
-#print(dfclass)
 
-print(df.head())
+# Show dataset
+print("DATAFRAME COLUMNNS: ",df.columns)
+X = pd.DataFrame(data=df, columns=['u', 'g', 'r', 'i', 'z', 'redshift']) #.to_numpy()
+y = df['class']#.to_numpy()
+
+# Normalize data per column
+X = (X-X.min())/(X.max()-X.min())
+
+if DEBUG:
+    fig = plt.figure()
+    print("X_norm shape: ",X.shape)
+
+    for col in X:
+        print(col)
+    X.plot(kind='box')
+
+    plt.show()
+
+print("DataFrame Head: \n",df.head())
+
+df = X
 
 # Balancing dataset
 twos_subset = df.loc[df["class"] == 2, :] # Lowest present
