@@ -61,17 +61,14 @@ print("Balancing dataset")
 
 twos_subset = df.loc[df["class"] == 2, :]
 number_of_twos = twos_subset.shape[0]
-print("Number of 2s: ", number_of_twos)
 
 zeros_subset = df.loc[df["class"] == 0, :]
 sampled_zeros = zeros_subset.sample(number_of_twos)
 number_of_zeros = sampled_zeros.shape[0]
-print("Number of 0s: ", number_of_zeros)
 
 ones_subset = df.loc[df["class"] == 1, :]
 sampled_ones = ones_subset.sample(number_of_twos)
 number_of_ones = sampled_ones.shape[0]
-print("Number of 1s: ", number_of_ones)
 
 clean_df = pd.concat([sampled_ones, sampled_zeros, twos_subset], ignore_index=True)
 
@@ -90,3 +87,16 @@ train           = clean_df.sample(train_size)
 validate        = clean_df.sample(validate_size)
 test            = clean_df.sample(test_size)
 
+'''
+Neural Network Layers
+'''
+input_layer_size  = clean_df.columns.size
+hidden_layer_size = 25
+num_labels        = 3
+
+weights = None
+
+# get the model weights from the dictionary
+Theta1, Theta2 = weights['Theta1'], weights['Theta2']
+
+# Feedfordward Propagation and Prediction

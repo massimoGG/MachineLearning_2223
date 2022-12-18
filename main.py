@@ -12,6 +12,7 @@ One vs All Classification Logistic Regression
 import os
 # Scientific and vector computation for python
 import numpy as np
+np.seterr(all="ignore")
 import pandas as pd
 # Plotting library
 from matplotlib import pyplot as plt
@@ -49,6 +50,7 @@ if DEBUG:
     utils.showCorrelation(df)
     utils.showProportion(df, "Unbalanced Class Proportion")
 
+print("Normalizing dataset")
 dfclass = df['class'].copy()
 #df = (df - df.mean())/df.std()
 df = (df - df.min())/(df.max() - df.min())
@@ -110,29 +112,60 @@ test_size       = int(0.15*(clean_df.shape[0]))
 train           = clean_df.sample(train_size)
 validate        = clean_df.sample(validate_size)
 test            = clean_df.sample(test_size)
+# TODO: SAVE THIS FOR LATER MODELS?
 
 #train, validate, test = np.split(clean_df.sample(frac=1, random_state=42),[int(.7*len(clean_df)), int(.85*len(clean_df))])
 
 '''
 Train model
 '''
-print("Training model...")
-X = pd.DataFrame(data=train, columns=['u', 'g', 'r', 'i', 'z', 'redshift']).to_numpy(dtype=float)
-y = train['class'].to_numpy()
-lambda_ = 0.01
+lambdas = [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1]
+models  = []
 
-all_theta = utils.oneVsAll(X, y, 3, lambda_)
-print("--------------------\nOneVsAll Thetas\n--------------------\n",all_theta)
+X_train = pd.DataFrame(data=train, columns=['u', 'g', 'r', 'i', 'z', 'redshift']).to_numpy(dtype=float)
+y_train = train['class'].to_numpy()
+
+for lambda_ in lambdas:
+    print("--------------------\n   Training model   \n--------------------\nMethod: One Vs All\nLambda: ",lambda_)
+    model = utils.oneVsAll(X_train, y_train, 3, lambda_)
+    #print("Thetas: ", model)
+
+    # Validate model using validation data and determine accuracy
+    accuracy = utils.validateModel(validate, model)
+
+    # Append this model to cache
+    modelResult = {
+        "Lambda": lambda_, 
+        "Accuracy": accuracy, 
+        "Model": model
+    }
+    models.append(modelResult)
+    print("Accuracy: ", accuracy)
+
+# Determine best performing model (Best Hyperparameter value)
+bestModel = {
+    "Lambda" : 0,
+    "Accuracy" :0,
+    "Model": None
+}
+
+for curModel in models:
+    print("Lambda: ",curModel['Lambda'], " \t- Accuracy: ",curModel['Accuracy'])
+    if (curModel["Accuracy"] > bestModel["Accuracy"]):
+        # Replace with better model
+        bestModel = curModel
+
+print("Best model has an accuracy of ", bestModel["Accuracy"])
 
 '''
 Predict dataset
 '''
-print("Predicting dataset...")
+print("Predicting dataset with test dataset...")
 
 X_t = pd.DataFrame(data=test, columns=['u', 'g', 'r', 'i', 'z', 'redshift']).to_numpy(dtype=float)
 y_t = test['class'].to_numpy()
 
-pred = utils.predictOneVsAll(all_theta, X_t)
+pred = utils.predictOneVsAll(bestModel["Model"], X_t)
 accuracy = np.mean(pred == y_t) * 100
 
 print("--------------------\nTraining Set Accuracy\n--------------------\n",accuracy,"%")

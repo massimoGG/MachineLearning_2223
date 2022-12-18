@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
 # Optimization module in scipy
 from scipy import optimize
@@ -36,8 +37,18 @@ def showCorrelation(df):
         for j in range(len(df.columns)-1):
             text = ax.text(j, i, round(corr.to_numpy()[i, j], 2),
                            ha="center", va="center", color="black")
-
     plt.show()
+
+def validateModel(df, model):
+    X_t = pd.DataFrame(data=df, columns=['u', 'g', 'r', 'i', 'z', 'redshift']).to_numpy(dtype=float)
+    y_t = df['class'].to_numpy()
+
+    prediciton = predictOneVsAll(model, X_t)
+    accuracy = np.mean(prediciton == y_t)
+
+    return accuracy
+
+
 
 def lrCostFunction(theta, X, y, lambda_):
     """
@@ -87,7 +98,6 @@ def lrCostFunction(theta, X, y, lambda_):
     temp[0] = 0   # because we don't add anything for j = 0
     
     J= (1/m)*((-y.dot(np.log(h)))-(1-y).dot(np.log(1-h)))+ ((lambda_/(2*m))* np.sum(np.square(temp)))
-    
     grad = (1 / m) * (h - y).dot(X) 
     grad = grad + (lambda_ / m) * temp
 
