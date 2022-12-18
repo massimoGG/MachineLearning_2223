@@ -4,6 +4,18 @@ from matplotlib import pyplot as plt
 # Optimization module in scipy
 from scipy import optimize
 
+labels = ['GALAXY','STAR','QSO']
+
+def showProportion(df, title):
+    fig, ax = plt.subplots()
+
+    vc = df['class'].value_counts()
+
+    ax.pie(vc, labels=labels, autopct='%.0f%%', startangle=90, textprops={'size':'smaller'})
+    ax.set_title(title)
+    ax.axis('equal')
+    plt.show()
+
 def showCorrelation(df):
     # Show correlation
     shape = df.shape[1]
@@ -12,6 +24,7 @@ def showCorrelation(df):
 
     fig, ax = plt.subplots(figsize=(shape, shape))
     im = ax.imshow(corr, interpolation="spline36")
+    ax.set_title('Pearson Correlation')
     #fig.colorbar(im, orientation="vertical")
 
     # Show all ticks and label them with the dataframe column name

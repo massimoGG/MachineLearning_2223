@@ -47,6 +47,7 @@ print('Shape after filtering :',df.shape)
 
 if DEBUG:
     utils.showCorrelation(df)
+    utils.showProportion(df, "Unbalanced Class Proportion")
 
 dfclass = df['class'].copy()
 #df = (df - df.mean())/df.std()
@@ -96,6 +97,8 @@ clean_df = pd.concat([sampled_ones, sampled_zeros, twos_subset], ignore_index=Tr
 print("Balanced dataset: ")
 print(clean_df)
 print(clean_df['class'].value_counts())
+if DEBUG:
+    utils.showProportion(clean_df, "Balanced Class Proportion")
 
 '''
 Split dataset into 70/15/15 train, validate, test
@@ -122,35 +125,10 @@ all_theta = utils.oneVsAll(X, y, 3, lambda_)
 print("--------------------\nOneVsAll Thetas\n--------------------\n",all_theta)
 
 '''
-X = train.iloc[:,0:4]
-ones = np.ones([X.shape[0],1])
-X = np.concatenate((ones,X),axis=1)
-y = train.iloc[:,5].values #.values converts it from pandas.core.frame.DataFrame to numpy.ndarray
-theta = np.zeros([1,5])
-print("Theta shape: ",theta.shape)
-
-# Apply one-vs-all multi-classification
-lambda_ = 0.1
-print("X Shape:", X.shape, "Y Shape:", y.shape)
-all_theta = utils.oneVsAll(X, y, 3, lambda_)
-
-print("Thetas:\n",all_theta)
-'''
-
-'''
 Predict dataset
 '''
 print("Predicting dataset...")
-'''
-print(test.head())
-X_test = validate.iloc[:,0:5]
-y_test = validate.iloc[:,5:10].values
-print(X_test.shape)
-print(y_test.shape)
 
-pred = utils.predictOneVsAll(all_theta, X_test)
-print('Training Set Accuracy: {:.2f}%'.format(np.mean(pred == y_test) * 100))
-'''
 X_t = pd.DataFrame(data=test, columns=['u', 'g', 'r', 'i', 'z', 'redshift']).to_numpy(dtype=float)
 y_t = test['class'].to_numpy()
 
@@ -158,3 +136,26 @@ pred = utils.predictOneVsAll(all_theta, X_t)
 accuracy = np.mean(pred == y_t) * 100
 
 print("--------------------\nTraining Set Accuracy\n--------------------\n",accuracy,"%")
+
+# Report as graph
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score, hamming_loss
+
+y_t = np.array(y_t, dtype=int)
+pred = np.array(pred, dtype=int)
+print("Raw result: ", y_t, pred)
+accuracy, confusion, hamming = accuracy_score(y_t, pred), confusion_matrix(y_t, pred), hamming_loss(y_t, pred)
+print("Accuracy Score: ", accuracy)
+print("Confusion Matrix: ", confusion)
+print("Hamming Loss: ", hamming)
+
+fig, ax = plt.subplots(figsize=(7.5, 7.5))
+ax.matshow(confusion, cmap=plt.cm.Blues, alpha=0.3)
+
+for i in range(confusion.shape[0]):
+    for j in range(confusion.shape[1]):
+        ax.text(x=j, y=i,s=confusion[i, j], va='center', ha='center', size='xx-large')
+
+plt.xlabel('Predictions', fontsize=18)
+plt.ylabel('Actuals', fontsize=18)
+plt.title('Confusion Matrix', fontsize=18)
+plt.show()
