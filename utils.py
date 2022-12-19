@@ -4,6 +4,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 # Optimization module in scipy
 from scipy import optimize
+import seaborn as sns
 
 labels = ['GALAXY','STAR','QSO']
 
@@ -21,6 +22,7 @@ def showCorrelation(df):
     # Show correlation
     shape = df.shape[1]
     corr = df.corr(method="pearson")
+    '''
     corr.style.background_gradient(cmap='Greens')
 
     fig, ax = plt.subplots(figsize=(shape, shape))
@@ -37,6 +39,10 @@ def showCorrelation(df):
         for j in range(len(df.columns)-1):
             text = ax.text(j, i, round(corr.to_numpy()[i, j], 2),
                            ha="center", va="center", color="black")
+    '''
+    map = sns.diverging_palette(70,20,s=50, l=40, n=6,as_cmap=True)
+    f, ax = plt.subplots(figsize=(10,10))
+    sns.heatmap(corr,cmap="Blues",annot=True, )
     plt.show()
 
 def validateModel(df, model):

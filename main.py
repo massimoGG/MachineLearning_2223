@@ -46,8 +46,8 @@ df=df[df.u>-2000]
 df=df[df.g>-2000]
 print('Shape after filtering :',df.shape)
 
+utils.showCorrelation(df)
 if DEBUG:
-    utils.showCorrelation(df)
     utils.showProportion(df, "Unbalanced Class Proportion")
 
 print("Normalizing dataset")
@@ -119,7 +119,12 @@ test            = clean_df.sample(test_size)
 '''
 Train model
 '''
-lambdas = [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1]
+# Generate lambdas
+bigLambdas = list(range(0,100))
+lambdas = []
+for l in bigLambdas:
+    lambdas.append(l/250)
+
 models  = []
 
 X_train = pd.DataFrame(data=train, columns=['u', 'g', 'r', 'i', 'z', 'redshift']).to_numpy(dtype=float)
@@ -141,6 +146,15 @@ for lambda_ in lambdas:
     }
     models.append(modelResult)
     print("Accuracy: ", accuracy)
+
+# Show performace in function of lambda
+accuracy = []
+for curModel in models:
+    accuracy.append(curModel["Accuracy"])
+plt.plot(lambdas, accuracy)
+plt.xlabel("Lambda")
+plt.ylabel("Performance (%)")
+plt.show()
 
 # Determine best performing model (Best Hyperparameter value)
 bestModel = {
