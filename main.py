@@ -24,97 +24,97 @@ import utils
 # Show Debug info
 DEBUG = False
 
-# Load dataset 
-#labels = np.genfromtxt("MachineLearning_2223/star_classification.csv", delimiter=",", skip_header=1, usecols=17, dtype=str) # use arg names=True for headers
-df=pd.read_csv('star_classification.csv')
-#plt.pie(df['class'].value_counts(),autopct="%1.1f%%",labels=['GALAXY','STAR','QSO'])
-#plt.legend()
-#plt.show()
+def load_clean_normalize_balance_split_and_save_dataset():
+    # Load dataset 
+    #labels = np.genfromtxt("MachineLearning_2223/star_classification.csv", delimiter=",", skip_header=1, usecols=17, dtype=str) # use arg names=True for headers
+    df=pd.read_csv('star_classification.csv')
+    #plt.pie(df['class'].value_counts(),autopct="%1.1f%%",labels=['GALAXY','STAR','QSO'])
+    #plt.legend()
+    #plt.show()
 
-print('Shape before filtering columns :',df.shape)
-# Change class to values
-df.loc[df["class"] == "GALAXY", "class"] = 0
-df.loc[df["class"] == "STAR", "class"] = 1
-df.loc[df["class"] == "QSO", "class"] = 2
+    print('Shape before filtering columns :',df.shape)
+    # Change class to values
+    df.loc[df["class"] == "GALAXY", "class"] = 0
+    df.loc[df["class"] == "STAR", "class"] = 1
+    df.loc[df["class"] == "QSO", "class"] = 2
 
-# Drop useless fields
-df.drop(['obj_ID','cam_col', 'run_ID', 'rerun_ID', 'field_ID', 'fiber_ID', 'plate', 'MJD', 'spec_obj_ID','alpha', 'delta'] ,axis=1, inplace=True)
+    # Drop useless fields
+    df.drop(['obj_ID','cam_col', 'run_ID', 'rerun_ID', 'field_ID', 'fiber_ID', 'plate', 'MJD', 'spec_obj_ID','alpha', 'delta'] ,axis=1, inplace=True)
 
-print('Shape before filtering outliers :',df.shape)
-df=df[df.z>-2000]
-df=df[df.u>-2000]
-df=df[df.g>-2000]
-print('Shape after filtering :',df.shape)
+    print('Shape before filtering outliers :',df.shape)
+    df=df[df.z>-2000]
+    df=df[df.u>-2000]
+    df=df[df.g>-2000]
+    print('Shape after filtering :',df.shape)
 
-utils.showCorrelation(df)
-if DEBUG:
-    utils.showProportion(df, "Unbalanced Class Proportion")
+    utils.showCorrelation(df)
+    if DEBUG:
+        utils.showProportion(df, "Unbalanced Class Proportion")
 
-print("Normalizing dataset")
-dfclass = df['class'].copy()
-#df = (df - df.mean())/df.std()
-df = (df - df.min())/(df.max() - df.min())
-df['class'] = dfclass.copy()
+    print("Normalizing dataset")
+    dfclass = df['class'].copy()
+    #df = (df - df.mean())/df.std()
+    df = (df - df.min())/(df.max() - df.min())
+    df['class'] = dfclass.copy()
 
-'''
-X = pd.DataFrame(data=df, columns=['u', 'g', 'r', 'i', 'z', 'redshift']) #.to_numpy()
-y = df['class']#.to_numpy()
+    '''
+    X = pd.DataFrame(data=df, columns=['u', 'g', 'r', 'i', 'z', 'redshift']) #.to_numpy()
+    y = df['class']#.to_numpy()
 
-# Normalize data per column
-X = (X-X.min())/(X.max()-X.min())
+    # Normalize data per column
+    X = (X-X.min())/(X.max()-X.min())
 
-# Show dataset
-if DEBUG:
-    print("X_norm shape: ",X.shape)
+    # Show dataset
+    if DEBUG:
+        print("X_norm shape: ",X.shape)
 
-    for col in X:
-        print(col)
-    X.plot(kind='box')
+        for col in X:
+            print(col)
+        X.plot(kind='box')
 
-    plt.show()
-df = X
-'''
+        plt.show()
+    df = X
+    '''
 
-'''
-Balance dataset
-'''
-print("Balancing dataset")
+    '''
+    Balance dataset
+    '''
+    print("Balancing dataset")
 
-twos_subset = df.loc[df["class"] == 2, :]
-number_of_twos = twos_subset.shape[0]
-print("Number of 2s: ", number_of_twos)
+    twos_subset = df.loc[df["class"] == 2, :]
+    number_of_twos = twos_subset.shape[0]
+    print("Number of 2s: ", number_of_twos)
 
-zeros_subset = df.loc[df["class"] == 0, :]
-sampled_zeros = zeros_subset.sample(number_of_twos)
-number_of_zeros = sampled_zeros.shape[0]
-print("Number of 0s: ", number_of_zeros)
+    zeros_subset = df.loc[df["class"] == 0, :]
+    sampled_zeros = zeros_subset.sample(number_of_twos)
+    number_of_zeros = sampled_zeros.shape[0]
+    print("Number of 0s: ", number_of_zeros)
 
-ones_subset = df.loc[df["class"] == 1, :]
-sampled_ones = ones_subset.sample(number_of_twos)
-number_of_ones = sampled_ones.shape[0]
-print("Number of 1s: ", number_of_ones)
+    ones_subset = df.loc[df["class"] == 1, :]
+    sampled_ones = ones_subset.sample(number_of_twos)
+    number_of_ones = sampled_ones.shape[0]
+    print("Number of 1s: ", number_of_ones)
 
-clean_df = pd.concat([sampled_ones, sampled_zeros, twos_subset], ignore_index=True)
+    clean_df = pd.concat([sampled_ones, sampled_zeros, twos_subset], ignore_index=True)
 
-print("Balanced dataset: ")
-print(clean_df)
-print(clean_df['class'].value_counts())
-if DEBUG:
-    utils.showProportion(clean_df, "Balanced Class Proportion")
+    print("Balanced dataset: ")
+    print(clean_df)
+    print(clean_df['class'].value_counts())
+    if DEBUG:
+        utils.showProportion(clean_df, "Balanced Class Proportion")
 
-'''
-Split dataset into 70/15/15 train, validate, test
-'''
-train_size      = int(0.70*(clean_df.shape[0]))
-validate_size   = int(0.15*(clean_df.shape[0]))
-test_size       = int(0.15*(clean_df.shape[0]))
-
-train           = clean_df.sample(train_size)
-validate        = clean_df.sample(validate_size)
-test            = clean_df.sample(test_size)
-# TODO: SAVE THIS FOR LATER MODELS?
-
-#train, validate, test = np.split(clean_df.sample(frac=1, random_state=42),[int(.7*len(clean_df)), int(.85*len(clean_df))])
+    '''
+    Split dataset into 70/15/15 train, validate, test
+    '''
+    # Split dataset 
+    train, validate, test = np.split(clean_df.sample(frac=1, random_state=42),[int(.7*len(clean_df)), int(.85*len(clean_df))])
+    train.to_csv("train.csv")
+    validate.to_csv("validate.csv")
+    test.to_csv("test.csv")
+    
+train=pd.read_csv('train.csv')
+validate=pd.read_csv('validate.csv')
+test=pd.read_csv('test.csv')
 
 '''
 Train model
